@@ -7,6 +7,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Service
 import ru.reu.time.vo.AirplaneRequest
 import ru.reu.time.vo.FlightVO
+import ru.reu.time.vo.TypeAirplane
+import ru.reu.time.vo.TypeAirplaneRequest
 
 @Service
 class AirplaneService(
@@ -23,14 +25,16 @@ class AirplaneService(
         log.info("Received message: $receivedMessage")
         rabbitTemplate.convertAndSend(
             "airplaneRequest",
-            mapper.writeValueAsString(AirplaneRequest(
-                null,
-                receivedMessage.hasVips,
-                receivedMessage.hasBaggage,
-                receivedMessage.airplane.id,
-                receivedMessage.gateNum,
-                receivedMessage.airplane.refuelNeeded
-            ))
+            mapper.writeValueAsString(
+                AirplaneRequest(
+                    if (receivedMessage.direction == TypeAirplane.ARRIVAL) TypeAirplaneRequest.TAKEOFF else TypeAirplaneRequest.LANDING,
+                    receivedMessage.hasVips,
+                    receivedMessage.hasBaggage,
+                    receivedMessage.airplane.id,
+                    receivedMessage.gateNum,
+                    receivedMessage.airplane.refuelNeeded
+                )
+            )
         )
         log.info("Successful send to handling service flightId: ${receivedMessage.id} and airplaneId: ${receivedMessage.airplane}")
     }
