@@ -24,6 +24,7 @@ class AirplaneService(
             "airplaneRequest",
             mapper.writeValueAsString(
                 AirplaneRequest(
+                    receivedMessage.id,
                     if (receivedMessage.direction == TypeAirplane.ARRIVAL) TypeAirplaneRequest.TAKEOFF else TypeAirplaneRequest.LANDING,
                     receivedMessage.hasVips,
                     receivedMessage.hasBaggage,
