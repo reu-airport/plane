@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Service
-import ru.reu.time.vo.AirplaneRequest
-import ru.reu.time.vo.FlightVO
-import ru.reu.time.vo.TypeAirplane
-import ru.reu.time.vo.TypeAirplaneRequest
+import ru.reu.time.vo.*
 
 @Service
 class AirplaneService(
@@ -33,6 +30,15 @@ class AirplaneService(
                     receivedMessage.airplane.id,
                     receivedMessage.gateNum,
                     receivedMessage.airplane.refuelNeeded
+                )
+            )
+        )
+        rabbitTemplate.convertAndSend(
+            "airplaneVisualRequest",
+            mapper.writeValueAsString(
+                AirplaneVisualEvent(
+                    receivedMessage.airplane.id,
+                    if (receivedMessage.direction == TypeAirplane.ARRIVAL) TypeAirplaneRequest.TAKEOFF else TypeAirplaneRequest.LANDING,
                 )
             )
         )
