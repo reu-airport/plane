@@ -34,7 +34,7 @@ class AirplaneService(
             )
         )
         rabbitTemplate.convertAndSend(
-            "airplaneVisualRequest",
+            "airplaneVisualEvent",
             mapper.writeValueAsString(
                 AirplaneVisualEvent(
                     receivedMessage.airplane.id,
